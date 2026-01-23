@@ -79,10 +79,14 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_TOKEN }}
-
-      - name: Build Docker image
+      - name: Debug project structure
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/lab4-mlops:latest .
+          pwd
+          ls -la
+
+      - name: Build Docker image(safe mode)
+        run: |
+          docker build -f Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/lab4-mlops:latest .
 
       - name: Push Docker image
         run: |
