@@ -10,10 +10,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Python 3.11
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
@@ -28,7 +28,7 @@ jobs:
         run: cat metrics.json
 
       - name: Upload model & metrics as artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: model-artifacts
           path: |
@@ -42,17 +42,18 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Download artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: model-artifacts
 
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq bc
+
       - name: Read metrics
-        id: metrics
         run: |
-          echo "MSE=$(jq -r .mse metrics.json)" >> $GITHUB_ENV
           echo "R2=$(jq -r .r2 metrics.json)" >> $GITHUB_ENV
 
       - name: Compare metrics
