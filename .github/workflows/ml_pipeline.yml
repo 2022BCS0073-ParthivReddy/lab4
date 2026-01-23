@@ -74,7 +74,7 @@ jobs:
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_AT }}
+          password: ${{ secrets.DOCKER_TOKEN }}
 
       # ✅ Build & Push Docker Image (NO build context error)
       - name: Build and Push Docker Image
