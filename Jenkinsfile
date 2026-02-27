@@ -67,7 +67,7 @@ pipeline {
 
                     echo "Invalid Response: ${response}"
 
-                    if (!response.contains("detail")) {
+                    if (!response.contains("wrong_key")) {
                         error("Invalid input did not return validation error!")
                     }
                     echo "Invalid input correctly returned validation error"
