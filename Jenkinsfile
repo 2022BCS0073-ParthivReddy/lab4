@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "parthireddy2005/2022bcs0073-jenkins:latest"
+        IMAGE_NAME = "parthivreddy2005/2022bcs0073-jenkins:latest"
         CONTAINER_NAME = "2022bcs0073_jenkins"
         PORT = "8000"
     }
