@@ -19,11 +19,12 @@ pipeline {
 
         stage('Run Container') {
             steps {
-                script {
-                    sh """
-                    docker run -d -p ${PORT}:8000 --name ${CONTAINER_NAME} ${IMAGE_NAME}
-                    """
-                }
+               script {
+                   sh """
+                   docker rm -f ${CONTAINER_NAME} || true
+                   docker run -d -p ${PORT}:8000 --name ${CONTAINER_NAME} ${IMAGE_NAME}
+                   """
+               }
             }
         }
 
