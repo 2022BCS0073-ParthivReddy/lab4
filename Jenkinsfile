@@ -1,46 +1,84 @@
-pipeline {     agent any 
- 
-    stages { 
- 
-        stage('Print Student Info') { 
-            steps { 
-                sh ''' 
-                echo "======================================"                 echo "Name: PARTHIV REDDY" 
-                echo "Roll No: 2022BCS0073" 
-                echo "======================================" 
-                ''' 
-            } 
-        } 
- 
-        stage('Create Virtual Environment') { 
-            steps { 
-                sh 'python3 -m venv venv' 
-            } 
-        } 
- 
-        stage('Install Dependencies') { 
-            steps { 
-                sh ''' 
-                ./venv/bin/pip install --upgrade pip 
-                ./venv/bin/pip install -r requirements.txt 
-                ''' 
-            } 
-        } 
- 
-        stage('Run Training Script') { 
-            steps { 
-                sh ''' 
-                ./venv/bin/python train.py 
-                ''' 
-            } 
-        } 
- 
-        stage('Print Completion Message') { 
-            steps {                 sh '''                 echo "======================================" 
-                echo "Model training completed successfully!"                 echo "Name: PARTHIV REDDY" 
-                echo "Roll No: 2022BCS0073"                 echo "======================================" 
-                ''' 
-            } 
-        } 
-    } 
+pipeline {
+    agent any
+
+    environment {
+        IMAGE_NAME = "yourdockerhubusername/yourimage:latest"
+        CONTAINER_NAME = "ml_container"
+        PORT = "8000"
+    }
+
+    stages {
+
+        stage('Pull Image') {
+            steps {
+                script {
+                    sh "docker pull ${IMAGE_NAME}"
+                }
+            }
+        }
+
+        stage('Run Container') {
+            steps {
+                script {
+                    sh """
+                    docker run -d -p ${PORT}:8000 --name ${CONTAINER_NAME} ${IMAGE_NAME}
+                    """
+                }
+            }
+        }
+
+        stage('Wait for Service Readiness') {
+            steps {
+                script {
+                    sleep 10
+                    sh """
+                    curl -f http://localhost:${PORT}/docs
+                    """
+                }
+            }
+        }
+
+        stage('Send Valid Inference Request') {
+            steps {
+                script {
+                    def response = sh(
+                        script: "curl -s -X POST http://localhost:${PORT}/predict -H 'Content-Type: application/json' -d @tests/valid.json",
+                        returnStdout: true
+                    ).trim()
+
+                    echo "Valid Response: ${response}"
+
+                    if (!response.contains("prediction")) {
+                        error("Prediction field missing!")
+                    }
+                }
+            }
+        }
+
+        stage('Send Invalid Request') {
+            steps {
+                script {
+                    def response = sh(
+                        script: "curl -s -X POST http://localhost:${PORT}/predict -H 'Content-Type: application/json' -d @tests/invalid.json",
+                        returnStdout: true
+                    ).trim()
+
+                    echo "Invalid Response: ${response}"
+
+                    if (!response.contains("error")) {
+                        error("Invalid input did not return error!")
+                    }
+                }
+            }
+        }
+
+        stage('Stop Container') {
+            steps {
+                script {
+                    sh "docker stop ${CONTAINER_NAME}"
+                    sh "docker rm ${CONTAINER_NAME}"
+                }
+            }
+        }
+    }
 }
