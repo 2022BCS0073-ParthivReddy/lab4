@@ -1,3 +1,9 @@
 {
-  "features": [7.4, 0.70, 0.00, 1.9, 0.076, 11.0]
+  "fixed_acidity": 7.4,
+  "volatile_acidity": 0.7,
+  "chlorides": 0.076,
+  "total_sulfur_dioxide": 34.0,
+  "density": 0.9978,
+  "sulphates": 0.56,
+  "alcohol": 9.4
 }
