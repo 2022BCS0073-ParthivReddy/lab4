@@ -43,7 +43,7 @@ pipeline {
             steps {
                 script {
                     def response = sh(
-                        script: "curl -s -X POST http://localhost:${PORT}/predict -H 'Content-Type: application/json' -d @tests/valid.json",
+                        script: "curl -s -X POST http://host.docker.internal:${PORT}/predict -H 'Content-Type: application/json' -d @tests/valid.json",
                         returnStdout: true
                     ).trim()
 
