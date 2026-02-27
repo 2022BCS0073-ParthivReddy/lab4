@@ -33,7 +33,7 @@ pipeline {
                 script {
                     sleep 10
                     sh """
-                    curl -f http://localhost:${PORT}/docs
+                    curl -f http://host.docker.internal:${PORT}/docs
                     """
                 }
             }
